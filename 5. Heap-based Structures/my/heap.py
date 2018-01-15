@@ -8,9 +8,11 @@ class Heap(object):
             self.arr = list(values)
         self.n = len(self.arr)
 
-        start = self.n//2 - 1               # nodes without children
+        # takes O(n) to convert values into heap
+        start = self.n//2 - 1           # only parent nodes with chilren
         for i in range(start, -1, -1):
             self.heapify (i)
+
 
     def parent(self, i):
         """Get parent index of i-th index"""
@@ -43,7 +45,12 @@ class Heap(object):
         self.arr[a], self.arr[b] = self.arr[b], self.arr[a]
 
     def add(self, value):
-        self.arr.append(value)
+        """Add value to heap and repair heap."""
+        if self.n == len(self.arr):
+            self.arr.append(value)
+        else:
+            self.arr[self.n] = value # reuse available space, because pop doesn't delete element
+
         i = self.n
         self.n += 1
 
