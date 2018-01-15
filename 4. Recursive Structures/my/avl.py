@@ -1,20 +1,26 @@
 # -*- coding=utf-8 -*-
+import sys
+sys.path.append('../../../')
 from utils import _build_tree_string
 
 class BinaryNode:
 
   def __init__(self, value = None):
       """Create binary node."""
-      self.value  = value
+      self._value  = value
       self.left   = None
       self.right  = None
       self.height = 1
+
+  @property
+  def value(self):
+    return '{}:{}'.format(self._value, self.height)
 
   def bfactor(self):
     '''Calculate balance factor'''
     return self.heightRight - self.heightLeft
 
-  def fixheight(self):
+  def fixHeight(self):
     hl = self.heightLeft
     hr = self.heightRight
     self.height = (hl if hl>hr else hr)+1
@@ -28,34 +34,36 @@ class BinaryNode:
     return self.right.height if self.right else 0
   
   def rotateright(self):
-    newRootL = self.left
-    self.left = newRootL.right
-    newRootL.right = self
+    newParentL = self.left
+    self.left = newParentL.right
+    newParentL.right = self
 
-    self.fixheight()
-    newRootL.fixheight()
+    self.fixHeight()
+    newParentL.fixHeight()
 
-    return newRootL
+    return newParentL
 
   def rotateleft(self):
-    newRootR = self.right
-    self.right = newRootR.left
-    newRootR.left = self
+    newParentR = self.right
+    self.right = newParentR.left
+    newParentR.left = self
 
-    self.fixheight()
-    newRootR.fixheight()
+    self.fixHeight()
+    newParentR.fixHeight()
 
-    return newRootR
+    return newParentR
 
   def balance(self):
-    self.fixheight()
+    self.fixHeight()
 
     if self.bfactor() == 2:
+      # if self.right.left.height > self.right.right.height
       if self.right.bfactor() < 0:
         self.right = self.right.rotateright()
       return self.rotateleft()
 
     elif self.bfactor() == -2:
+      # if self.left.right.height > self.left.left.height
       if self.left.bfactor() > 0:
         self.left = self.left.rotateleft()
       return self.rotateright()
@@ -63,7 +71,7 @@ class BinaryNode:
     return self   # not need for balance
 
   def add(self, val):
-    if val < self.value:
+    if val < self._value:
       if self.left == None:
         self.left = BinaryNode(val)
         return self.balance()
@@ -75,6 +83,37 @@ class BinaryNode:
         return self.balance()
 
       self.right = self.right.add(val)
+
+    return self.balance()
+  
+  def findMin(self, val):
+    """Find node with min value"""
+    return self.left.findMin(val) if self.left else self
+  
+  def removeMin(self):
+    if self.left == None:
+      return self.right
+
+    self.left = self.left.removeMin()
+    return self.balance()
+
+  def remove(self, val):
+    if val < self._value:
+      if self.left == None: return None
+      self.left = self.left.remove(val)
+
+    elif val > self._value:
+      if self.right == None: return None
+      self.right = self.right.remove(val)
+    else:                                   # if val == self.value
+      left  = self.left
+      right = self.right
+
+      if right == None: return left
+      min = right.findMin(val)
+      min.left  = left
+      min.right = right.removeMin()
+      return min.balance()
 
     return self.balance()
 
@@ -118,15 +157,24 @@ class BinaryTree:
       self.add(_)
 
   def add(self, value):
-    """Insert value into proper location in Binary Tree."""
+    """Insert value into proper location in Tree."""
     if self.root is None:
         self.root = BinaryNode(value)
     else:
         self.root = self.root.add(value)
 
+  def remove(self, value):
+    """Remove value from Tree."""
+    if self.root is None:
+        return None
+    else:
+        self.root = self.root.remove(value)
+
   def dumpTree(self):
     print(self.root)
 
 if __name__ == "__main__":
-  bt = BinaryTree(*list(range(0,21)))
+  bt = BinaryTree(*list(range(1,20)))
+  bt.dumpTree()
+  bt.remove(16)
   bt.dumpTree()

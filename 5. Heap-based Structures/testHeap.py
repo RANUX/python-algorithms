@@ -5,7 +5,7 @@
 """
 import unittest
 
-from heap import Heap
+from my.heap import Heap
 import random
 
 class TestHeap(unittest.TestCase):
@@ -23,8 +23,8 @@ class TestHeap(unittest.TestCase):
     def test_start(self):
         values = list(range(10,0,-1))
         self.heap = Heap(values)
+        result=[]
         
-        result = []
         while not self.heap.isEmpty():
             result.append(self.heap.pop())
 

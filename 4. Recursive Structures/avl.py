@@ -18,7 +18,7 @@ class BinaryNode:
 
     def computeHeight(self):
         """Compute height of node in BST."""
-        height = -1
+        height = -1                                 # no children heigh
         if (self.left):
             height = max(height, self.left.height)
         if (self.right):
@@ -129,6 +129,7 @@ class BinaryNode:
         
         if val <= self.value:
             self.left = self.addToSubTree(self.left, val)
+            # if left subtree heigher than right
             if self.heightDifference() == 2:
                 if val <= self.left.value:
                     newRoot = self.rotateRight()
