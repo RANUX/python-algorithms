@@ -22,7 +22,6 @@ class Node(object):
         self.children[childNum] = None
         return tempNode
 
-    #  -------------------------------------------------------------
     def getChild(self, childNum):
         """ Get child node """
         return self.children[childNum]
@@ -31,12 +30,10 @@ class Node(object):
         """ Is node leaf """
         return True if (self.children[0] == None) else False
 
-    #  -------------------------------------------------------------
     def getNumItems(self):
         """ Get number of items """
         return self.numItems
 
-    #  -------------------------------------------------------------
     def getItem(self, index):
         """ Get item """
         #  get DataItem at index
