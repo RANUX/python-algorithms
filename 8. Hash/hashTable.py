@@ -3,28 +3,49 @@ class HashTable(object):
     REMOVED_KEY = -1
 
     def __init__(self, size):
+        if not self.isPrime(size):
+            raise ValueError("size should be prime number")
+
         self.hashArray = [None]*size
         self.size = size
         self.removedItem = {"key": self.REMOVED_KEY}
+        self.hashStep = self.hashDouble
+
+    def isPrime(self, n):
+        i = 2
+        while i*i <= n:
+            if n % i == 0:
+                return False
+            i += 1
+        return True
 
     def hash(self, key):
         return key % self.size
 
+    def hashDouble(self, key):
+        ''' hashArray length should be prime number for check all array cells'''
+        # non-zero, less than array size, different from hash()
+        # array size must be relatively prime to 5, 4, 3, and 2
+        return 5 - key % 5
+
+    def hashLinear(self, key):
+        return 1
+
     def insert(self, data):
         """ Insert data to HashTable. Data shoud be {'key': [some int val], 'value': [any val]} """
         hashVal = self.hash(data["key"])
-
+        stepSize = self.hashStep(data["key"])
         while self.hashArray[hashVal] != None and self.hashArray[hashVal]["key"] != self.REMOVED_KEY:
-            hashVal += 1
+            hashVal += stepSize
             hashVal %= self.size  # wraparound array if necessary
         
         self.hashArray[hashVal] = data
 
     def delete(self, key):
         hashVal = self.hash(key)
-
+        stepSize = self.hashStep(key)
         while self.hashArray[hashVal] != None and self.hashArray[hashVal]["key"] != key:
-            hashVal += 1
+            hashVal += stepSize
             hashVal %= self.size
 
         val = self.hashArray[hashVal]
@@ -34,22 +55,25 @@ class HashTable(object):
     def find(self, key):
         """ Find value by key """
         hashVal = self.hash(key)
-
+        stepSize = self.hashStep(key)
         while self.hashArray[hashVal] != None and self.hashArray[hashVal]["key"] != key:
-            hashVal += 1
+            hashVal += stepSize
             hashVal %= self.size
         
         return self.hashArray[hashVal]
 
     def __str__(self):
-        return str(self.hashArray)
+        s = ''
+        for i, item in enumerate(self.hashArray):
+            s = '{}{} {}\n'.format(s, i, str(item))
+        return s
 
 if __name__ == "__main__":
-    ht = HashTable(10)
-    ht.insert({"key": 20, "value": "first"})
-    ht.insert({"key": 59, "value": "second"})
-    ht.delete(20)
-    ht.insert({"key": 69, "value": "third"})
+    data = [1, 38, 37, 16, 20, 3, 11, 24, 5, 16, 10, 31, 18, 12, 30, 1, 19, 36, 41, 15, 25]
+    ht = HashTable(23)
+    for el in data:
+        ht.insert({"key": el, "hash": ht.hash(el), "step": ht.hashStep(el)})
+    #ht.delete(41)
     print(ht)
-    print(ht.find(79))
+    #print(ht.find(25))
 
