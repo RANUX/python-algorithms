@@ -3,6 +3,9 @@ class HashTable(object):
     REMOVED_KEY = -1
 
     def __init__(self, size):
+        """ Size should be prime number for check all array cells. 
+            If many keys have common divider with size, they will group in same position
+        """
         if not self.isPrime(size):
             size = self.getPrime(size)
 
@@ -31,7 +34,7 @@ class HashTable(object):
         return key % self.size
 
     def hashDouble(self, key):
-        """ hashArray length should be prime number for check all array cells """
+        """  """
         # non-zero, less than array size, different from hash()
         # array size must be relatively prime to 5, 4, 3, and 2
         return 5 - key % 5
