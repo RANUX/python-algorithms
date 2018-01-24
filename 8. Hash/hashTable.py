@@ -4,14 +4,22 @@ class HashTable(object):
 
     def __init__(self, size):
         if not self.isPrime(size):
-            raise ValueError("size should be prime number")
+            size = self.getPrime(size)
 
         self.hashArray = [None]*size
         self.size = size
         self.removedItem = {"key": self.REMOVED_KEY}
         self.hashStep = self.hashDouble
 
+    def getPrime(self, min):
+        i = min + 1
+        while True:
+            if self.isPrime(i):
+                return i
+            i += 1
+
     def isPrime(self, n):
+        """ Check n is prime number """
         i = 2
         while i*i <= n:
             if n % i == 0:
@@ -23,7 +31,7 @@ class HashTable(object):
         return key % self.size
 
     def hashDouble(self, key):
-        ''' hashArray length should be prime number for check all array cells'''
+        """ hashArray length should be prime number for check all array cells """
         # non-zero, less than array size, different from hash()
         # array size must be relatively prime to 5, 4, 3, and 2
         return 5 - key % 5
