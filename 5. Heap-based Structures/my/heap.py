@@ -1,6 +1,6 @@
 
 class Heap(object):
-    def __init__(self, values = None, cmp=lambda a,b: a < b):
+    def __init__(self, values = None, cmp=lambda a,b: a <= b):
         self.cmp = cmp
         if values is None:
             self.arr = []
@@ -9,9 +9,10 @@ class Heap(object):
         self.n = len(self.arr)
 
         # takes O(n) to convert values into heap
+        # create heap from array
         start = self.n//2 - 1           # only parent nodes with chilren
         for i in range(start, -1, -1):
-            self.heapify (i)
+            self.moveDown(i)
 
 
     def parent(self, i):
@@ -38,7 +39,7 @@ class Heap(object):
         val = self.arr[0]
         self.n -= 1
         self.arr[0] = self.arr[self.n]
-        self.heapify(0)
+        self.moveDown(0)
         return val
 
     def __swap(self, a, b):
@@ -53,33 +54,45 @@ class Heap(object):
 
         i = self.n
         self.n += 1
+        self.moveUp(i)
 
-        while i > 0:
+    def moveUp(self, i):
+        parent = self.parent(i)
+        bottomVal = self.arr[i]
+        while i > 0 and self.cmp(self.arr[i], self.arr[parent]):
+            self.arr[i] = self.arr[parent]
+            i = parent
             parent = self.parent(i)
-            if self.cmp(self.arr[i], self.arr[parent]):
-                self.__swap(i, parent)
-                i = parent
+
+        self.arr[i] = bottomVal
+
+    def moveDown(self, i):
+        topVal = self.arr[i]
+
+        while i < self.n//2:                # while node has at least one child
+            left = self.left(i)
+            right = left + 1
+
+            if right < self.n and not self.cmp(self.arr[left], self.arr[right]):
+                largeChild = right
             else:
+                largeChild = left
+
+            if self.cmp(topVal, self.arr[largeChild]):
                 break
 
+            self.arr[i] = self.arr[largeChild]
+            i = largeChild
 
-    def heapify(self, i):
-        left = self.left(i)
-        right = self.right(i)
+        self.arr[i] = topVal
 
-        smallest = i
-
-        # Find smallest element of A[i], A[left], and A[right]
-        if left < self.n and self.cmp(self.arr[left], self.arr[i]):
-            smallest = left
-
-        if right < self.n and self.cmp(self.arr[right], self.arr[smallest]):
-            smallest = right
-
-        # If smallest is not already the parent then swap and propagate
-        if smallest != i:
-            self.__swap(i, smallest)
-            self.heapify(smallest)
+    def heapifyRec(self, index):
+        """ From list to heap"""
+        if index > self.n//2-1:   # if node without children
+            return
+        self.heapifyRec(index*2+2) # right subtree to heap
+        self.heapifyRec(index*2+1) # left subtree to heap
+        self.moveDown(index)
 
     def __len__(self):
         return self.n
