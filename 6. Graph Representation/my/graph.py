@@ -84,13 +84,14 @@ class DFSGraph(BaseGraph):
 
         while not self.stack.isEmpty():
             #print(self.stack)
-            v = self.getAdjUnvisitedVertex( self.stack.peek() )
+            cv = self.stack.peek()               # current vertex
+            v = self.getAdjUnvisitedVertex( cv )
             if v == -1:
                 self.stack.pop()
             else:
                 self.vertexList[v].visited = True
-                self.showVertex(v)
                 self.stack.push(v)
+                self.showVertex(v)
 
         # empty stack, job done, reset vert flags
         for j in range(0, self.nv):
