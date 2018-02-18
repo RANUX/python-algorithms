@@ -11,18 +11,19 @@ class Vertex:
         return "{}:{}".format(self.label, self.visited)
 
 class BaseGraph:
-
-    def __init__(self, maxVerts):
+    def __init__(self, maxVerts, fillAdjVal=0):
         self.maxVerts = maxVerts
         self.vertexList = []
         self.adjMatrix = []    # adjacent matrix
         self.nv = 0           # number of vertices
         for i in range(0, self.maxVerts):
-            self.adjMatrix.append([0]*self.maxVerts)
+            self.adjMatrix.append([fillAdjVal]*self.maxVerts)
 
-    def addVertex(self, char):
-        self.vertexList.append(Vertex(char))
+    def addVertex(self, label, vtype=Vertex):
+        self.vertexList.append(vtype(label))
+
         self.nv += 1
+    
 
     def showVertex(self, *vs):
         print(list(reduce(lambda p, v: p+[self.vertexList[v]], vs, [])))
@@ -116,6 +117,18 @@ class Graph(BaseGraph):
     def addEdge(self, start, end):
         self.adjMatrix[start][end] = 1
         self.adjMatrix[end][start] = 1
+
+class GraphW(BaseGraph):
+    ''' Weighted graph '''
+
+    def __init__(self, maxVerts, infinity=10000):
+        self.infinity = infinity
+        BaseGraph.__init__(self, maxVerts, self.infinity)
+
+    def addEdge(self, start, end, weight):
+        self.adjMatrix[start][end] = weight
+        self.adjMatrix[end][start] = weight
+
 
 class BFSGraph(Graph):
 

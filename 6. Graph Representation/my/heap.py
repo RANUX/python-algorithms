@@ -91,6 +91,24 @@ class Heap(object):
         self.heapifyRec(index*2+1) # left subtree to heap
         self.moveDown(index)
 
+    def find(self, value, cmp=lambda item, val: item == val):
+        i = 0
+        for i in range(i, self.n):
+            if cmp(self.arr[i], value):
+                return self.arr[i]
+        return None
+
+    def remove(self, value, cmp=lambda item, val: item == val):
+        removed = None
+        for i in range(0, self.n):
+            if cmp(self.arr[i], value):
+                removed = self.arr[i]
+                for j in range(i, self.n-1):
+                    self.arr[j] = self.arr[j+1]
+                self.n -= 1
+
+        return removed
+
     def __len__(self):
         return self.n
 
