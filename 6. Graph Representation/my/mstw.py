@@ -2,17 +2,8 @@
 '''
 Demonstrates minimum spanning tree with weighted graphs
 '''
-from graph import GraphW, Vertex
+from graph import GraphW, TVertex
 from heap import Heap
-
-class TVertex(Vertex):
-    
-    def __init__(self, label):
-        super().__init__(label)
-        self.isInTree = False
-
-    def __repr__(self):
-        return "{}:{}".format(self.label, self.isInTree)
 
 
 class Edge():
