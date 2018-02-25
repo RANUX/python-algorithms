@@ -108,6 +108,9 @@ def main():
     g.findShortPaths(0)
     g.showShortPaths()
 
+    am = g.shortesPaths()
+    print(am)
+
 
 if __name__ == "__main__":
     main()

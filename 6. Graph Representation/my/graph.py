@@ -123,16 +123,15 @@ class GraphWD(BaseGraph):
         (but with no negative cycles)
         '''
         am = self.copyAdjMatrix()
-        for k in range(0, self.nv):                 # row
-            for i in range(0, self.nv):             # col
-                if am[k][i] == self.infinity:
+        for r in range(0, self.nv):                 # row
+            for c in range(0, self.nv):             # col
+                if am[r][c] == self.infinity:
                     continue
                 for j in range(0, self.nv):         # row for selected col
-                    if am[j][k] == self.infinity:
+                    if am[j][r] == self.infinity:
                         continue
-                    if am[j][i] == self.infinity:
-                        am[j][i] = am[k][i]+am[j][k]
-
+                    if am[j][c] > (am[r][c]+am[j][r]):
+                        am[j][c] = am[r][c]+am[j][r]
         return am
 
 class TopoSortGraph(GraphWD):
@@ -290,7 +289,7 @@ def testBFS():
     g.bfs()
 
 def testShortestPaths():
-    g = GraphWD(5, 0)
+    g = GraphWD(5)
     g.addVertex('A') # 0
     g.addVertex('B') # 1
     g.addVertex('C') # 2
