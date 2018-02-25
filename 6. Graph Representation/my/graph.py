@@ -123,12 +123,12 @@ class GraphWD(BaseGraph):
         (but with no negative cycles)
         '''
         am = self.copyAdjMatrix()
-        for k in range(0, self.nv):                 # rows
-            for i in range(0, self.nv):             # cols
+        for k in range(0, self.nv):                 # row
+            for i in range(0, self.nv):             # col
                 if am[k][i] == self.infinity:
                     continue
-                for j in range(0, self.nv):         # rows for selected col
-                    if am[j][k] == self.infinity or j == k or i == j:
+                for j in range(0, self.nv):         # row for selected col
+                    if am[j][k] == self.infinity:
                         continue
                     if am[j][i] == self.infinity:
                         am[j][i] = am[k][i]+am[j][k]
