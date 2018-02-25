@@ -108,7 +108,7 @@ def main():
     g.findShortPaths(0)
     g.showShortPaths()
 
-    am = g.shortesPaths()
+    am = g.shortestPaths()
     print(am)
 
 

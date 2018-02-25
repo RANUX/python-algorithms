@@ -116,7 +116,7 @@ class GraphWD(BaseGraph):
     def addEdge(self, start, end, weight=1):
         self.adjMatrix[start][end] = weight
 
-    def shortesPaths(self):
+    def shortestPaths(self):
         ''' 
         Floyd–Warshall algorithm is an algorithm for finding shortest paths 
         in a weighted graph for all vertices with positive or negative edge weights 
@@ -307,7 +307,7 @@ def testShortestPaths():
     print(g.showEdges())
 
     print("visits:")
-    m = g.shortesPaths()
+    m = g.shortestPaths()
     g.showEdges(m)
 
 def testTopoSortGraph():
