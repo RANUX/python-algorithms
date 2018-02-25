@@ -30,11 +30,12 @@ class GraphMstw(GraphW):
     def addVertex(self, label):
         super().addVertex(label, TVertex)
 
-    def mstw(self):
+    def mstw(self, startVert=0):
         ''' Minimum spanning tree '''
-        self.curVert = 0
+        self.curVert = startVert
+        self.nTree = 1
 
-        while self.nTree < self.nv-1:                                # while not all verts in tree
+        while self.nTree < self.nv:                                # while not all verts in tree
             self.vertexList[self.curVert].isInTree = True            # put currentVert in tree
             self.nTree += 1
 
@@ -45,24 +46,24 @@ class GraphMstw(GraphW):
                 if self.vertexList[j].isInTree:                 # skip if in the tree
                     continue
                 
-                dist = self.adjMatrix[self.curVert][j]               # skip if no edge
+                dist = self.adjMatrix[self.curVert][j]               # skip if no adjacent edge
                 if dist == self.infinity:
                     continue
 
-                self.putInPQueue(j, dist)                       # put it in PQ (maybe)
+                self.putInPQueue(j, dist)                           # put it in PQ (maybe)
             
             if self.pQueue.isEmpty():
                 print("Graph not connected")
                 return
             
-            edge = self.pQueue.pop()
+            edge = self.pQueue.pop()                                # remove edge with minimum distance
             self.curVert = edge.dstv
 
             print( '{}{} '.format(self.vertexList[edge.srcv].label, self.vertexList[self.curVert].label) )
             
         
     def putInPQueue(self, newVert, newDist):
-        oldEdge = self.pQueue.find(newVert, lambda e, v: e.dstv == v)
+        oldEdge = self.pQueue.find(newVert, lambda e, v: e.dstv == v)   # find edge with the same destination vertex
 
         if oldEdge:                           # is there another edge with the same destination vertex?
             if oldEdge.dist > newDist:

@@ -5,10 +5,13 @@ from functools import reduce
 class Vertex:
     def __init__(self, label):
         self.label = label
-        self.visited = False
+        self.reset()
 
     def __repr__(self):
         return "{}:{}".format(self.label, self.visited)
+
+    def reset(self):
+        self.visited = False
 
 class TVertex(Vertex):
     
@@ -19,15 +22,25 @@ class TVertex(Vertex):
     def __repr__(self):
         return "{}:{}".format(self.label, self.isInTree)
 
+    def reset(self):
+        super().reset()
+        self.isInTree = False
+
 class BaseGraph:
     def __init__(self, maxVerts, infinity=0):
         self.infinity = infinity
         self.maxVerts = maxVerts
         self.vertexList = []
-        self.adjMatrix = []    # adjacent matrix
-        self.nv = 0           # number of vertices
+        self.adjMatrix = self.createEmptyAdjMatrix()    # adjacent matrix
+        self.nv = 0                                     # number of vertices
         for i in range(0, self.maxVerts):
-            self.adjMatrix.append([infinity]*self.maxVerts)
+            self.adjMatrix.append([self.infinity]*self.maxVerts)
+    
+    def createEmptyAdjMatrix(self):
+        m = []
+        for i in range(0, self.maxVerts):
+            m.append([self.infinity]*self.maxVerts)
+        return m
 
     def addVertex(self, label, vtype=Vertex):
         self.vertexList.append(vtype(label))
@@ -39,9 +52,10 @@ class BaseGraph:
     def showVertices(self):
         print(self.vertexList)
 
-    def showEdges(self):
+    def showEdges(self, m=None):
+        m = m or self.adjMatrix
         for i in range(0, self.maxVerts):
-            print(self.adjMatrix[i])
+            print(m[i])
 
     def getAdjUnvisitedVertex(self, v):
         for j in range(0, self.nv):
@@ -83,6 +97,17 @@ class BaseGraph:
         for row in range(0, length):
             self.adjMatrix[row][col] = self.adjMatrix[row][col+1]
 
+    def resetVertices(self):
+        for v in self.vertexList:
+            v.reset()
+
+    def copyAdjMatrix(self):
+        m = self.createEmptyAdjMatrix()
+        for i in range(self.nv):
+            for j in range(self.nv):
+                m[i][j] = self.adjMatrix[i][j]
+        return m
+
 class GraphWD(BaseGraph):
     ''' Directed weighted graph '''
     def __init__(self, maxVerts, infinity=10000):
@@ -90,6 +115,25 @@ class GraphWD(BaseGraph):
 
     def addEdge(self, start, end, weight=1):
         self.adjMatrix[start][end] = weight
+
+    def shortesPaths(self):
+        ''' 
+        Floyd–Warshall algorithm is an algorithm for finding shortest paths 
+        in a weighted graph for all vertices with positive or negative edge weights 
+        (but with no negative cycles)
+        '''
+        am = self.copyAdjMatrix()
+        for k in range(0, self.nv):                 # rows
+            for i in range(0, self.nv):             # cols
+                if am[k][i] == self.infinity:
+                    continue
+                for j in range(0, self.nv):         # rows for selected col
+                    if am[j][k] == self.infinity or j == k or i == j:
+                        continue
+                    if am[j][i] == self.infinity:
+                        am[j][i] = am[k][i]+am[j][k]
+
+        return am
 
 class TopoSortGraph(GraphWD):
 
@@ -245,6 +289,28 @@ def testBFS():
     print("visits:")
     g.bfs()
 
+def testShortestPaths():
+    g = GraphWD(5, 0)
+    g.addVertex('A') # 0
+    g.addVertex('B') # 1
+    g.addVertex('C') # 2
+    g.addVertex('D') # 3
+    g.addVertex('E') # 4
+
+    print(g.showVertices())
+
+    g.addEdge(0, 2) # AC
+    g.addEdge(1, 0) # BA
+    g.addEdge(1, 4) # BE
+    g.addEdge(3, 4) # DE
+    g.addEdge(4, 2) # EC
+
+    print(g.showEdges())
+
+    print("visits:")
+    m = g.shortesPaths()
+    g.showEdges(m)
+
 def testTopoSortGraph():
     g = TopoSortGraph(8)
     g.addVertex('A')
@@ -271,7 +337,8 @@ def testTopoSortGraph():
 def main():
     #testDFS()
     #testBFS()
-    testTopoSortGraph()
+    #testTopoSortGraph()
+    testShortestPaths()
 
 
 
